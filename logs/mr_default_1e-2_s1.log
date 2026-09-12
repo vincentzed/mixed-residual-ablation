@@ -1,0 +1,85 @@
++ NGPU=1
++ export LOG_RANK=0
++ LOG_RANK=0
++ MODULE=torchtitan.experiments.mixed_residual
++ CONFIG=mixed_residual_default
++ COMM_MODE=
++ TORCHFT_LIGHTHOUSE=http://localhost:29510
++ [[ -n '' ]]
++ '[' '' = fake_backend ']'
++ PYTORCH_ALLOC_CONF=expandable_segments:True
++ TORCHFT_LIGHTHOUSE=http://localhost:29510
++ torchrun --nproc_per_node=1 --rdzv_backend c10d --rdzv_endpoint=localhost:0 --local-ranks-filter 0 --role rank --tee 3 -m torchtitan.train --module torchtitan.experiments.mixed_residual --config mixed_residual_default --optimizer.param-groups.0.optimizer-kwargs.lr 1e-2 --debug.seed 1 --dump-folder ./outputs/mr_default_1e-2_s1
+[rank0]:WARNING:absl:Failed to load jax profiler: cannot import name 'jaxlib_extension_version' from 'jax._src.lib' (/opt/sglang/lib/python3.12/site-packages/jax/_src/lib/__init__.py)
+[rank0]:[titan] 2026-09-12 15:15:11,724 - root - INFO - torchtitan version: 0.0.0+unknown (0.0.0 means __version__ is not defined correctly).
+[rank0]:[titan] 2026-09-12 15:15:11,728 - root - WARNING - initial_load_model_only=True has no effect without an initial_load_path.
+[rank0]:[titan] 2026-09-12 15:15:11,781 - root - WARNING - initial_load_model_only=True has no effect without an initial_load_path.
+[rank0]:[titan] 2026-09-12 15:15:11,782 - torchtitan.observability.structured_logger.jsonl_handler - INFO - Structured logging -> JSONL: /home/brayden/torchtitan/outputs/mr_default_1e-2_s1/structured_logs/training.global_rank_0.20260912-151511-FX5308.jsonl
+[rank0]:[titan] 2026-09-12 15:15:12,101 - root - INFO - Enabled BF16x9 emulation for FP32 CUDA matmuls
+[rank0]:[titan] 2026-09-12 15:15:12,102 - root - WARNING - ENV[TORCH_NCCL_ASYNC_ERROR_HANDLING] = 1 will be overridden to 3 based on job config
+[rank0]:[titan] 2026-09-12 15:15:12,604 - root - INFO - [GC] Initial GC collection took 0.00 seconds
+[rank0]:[titan] 2026-09-12 15:15:12,606 - root - INFO - Building mixed_residual default
+[rank0]:[titan] 2026-09-12 15:15:12,623 - root - INFO - CUDA capacity: NVIDIA B300 SXM6 AC with 267.68GiB memory
+[rank0]:[titan] 2026-09-12 15:15:12,623 - root - WARNING - Error running lspci: [Errno 2] No such file or directory: 'lspci', fallback to use device_name
+[rank0]:[titan] 2026-09-12 15:15:12,623 - root - INFO - Total parameter count: 76,375,552, active parameters: 50,643,968
+[rank0]:[titan] 2026-09-12 15:15:12,624 - root - INFO - [34mModel mixed_residual default [31msize: 76,375,552 total parameters[39m
+[rank0]:[titan] 2026-09-12 15:15:12,624 - root - INFO - Compiling the loss function with torch.compile
+[rank0]:[titan] 2026-09-12 15:15:12,631 - root - INFO - Building device mesh with parallelism: pp=1, dp_replicate=1, dp_shard=1, cp=1, tp=1, ep=1
+[rank0]:[titan] 2026-09-12 15:15:12,635 - root - INFO - Successfully created meshes with active dimensions: []
+[rank0]:[titan] 2026-09-12 15:15:12,641 - root - INFO - Compiling each TransformerBlock with torch.compile
+[rank0]:[titan] 2026-09-12 15:15:12,656 - root - INFO - Applied FSDP to the model
+[rank0]:[titan] 2026-09-12 15:15:13,239 - root - WARNING - Error running lspci: [Errno 2] No such file or directory: 'lspci', fallback to use device_name
+[rank0]:[titan] 2026-09-12 15:15:13,239 - root - INFO - Peak FLOPS used for computing MFU: 2.250e+15
+[rank0]:[titan] 2026-09-12 15:15:13,239 - root - INFO - CUDA memory usage for model: 0.76GiB(0.28%)
+[rank0]:[titan] 2026-09-12 15:15:13,240 - root - INFO - Optimizer AdamW (model_part=0): 59 params [.*] {'fused': True, 'foreach': False, 'lr': 0.01, 'betas': (0.9, 0.95), 'eps': 1e-08, 'weight_decay': 0.1}
+[rank0]:[titan] 2026-09-12 15:15:13,240 - root - INFO - Loading tokenizer from tokenizer.json
+[rank0]:[titan] 2026-09-12 15:15:13,644 - httpx - INFO - HTTP Request: HEAD https://s3.amazonaws.com/datasets.huggingface.co/datasets/datasets/json/json.py "HTTP/1.1 200 OK"
+[rank0]:[titan] 2026-09-12 15:15:13,754 - root - WARNING - initial_load_model_only=True has no effect without an initial_load_path.
+[rank0]:[titan] 2026-09-12 15:15:13,754 - root - INFO - Trainer is initialized with 65536 tokens per DP rank, 65536 tokens per train step, gradient accumulation steps 1, maximum context length 256, total steps 1200 (warmup 100)
+[rank0]:[titan] 2026-09-12 15:15:13,754 - root - INFO - Training starts at step 1
+[rank0]:[titan] 2026-09-12 15:15:16,544 - root - INFO - [31mstep:  1  [32mloss: 11.29001  [38;2;180;60;0mgrad_norm:  6.1658  [38;2;54;234;195mmemory: 11.27GiB(4.21%)  [34mtps: 16,713  [36mtflops: 5.29  [35mmfu: 0.24%[39m
+[rank0]:[titan] 2026-09-12 15:15:16,661 - httpx - INFO - HTTP Request: HEAD https://s3.amazonaws.com/datasets.huggingface.co/datasets/datasets/json/json.py "HTTP/1.1 200 OK"
+[rank0]:[titan] 2026-09-12 15:15:22,349 - root - INFO - [33mvalidate step:  1  [32mloss: 10.5837  [38;2;54;234;195mmemory: 13.29GiB(4.97%)  [34mtps: 564,578[39m
+[rank0]:[titan] 2026-09-12 15:15:22,350 - root - INFO - Synchronizing and adjusting timeout for all ProcessGroups to 0:01:40
+[rank0]:[titan] 2026-09-12 15:15:22,671 - root - INFO - Recorded CUDA graph
+[rank0]:[titan] 2026-09-12 15:15:27,993 - root - INFO - [GC] Performing periodic GC collection took 0.02 seconds
+[rank0]:[titan] 2026-09-12 15:15:33,781 - root - INFO - [GC] Performing periodic GC collection took 0.01 seconds
+[rank0]:[titan] 2026-09-12 15:15:34,017 - root - INFO - [31mstep: 100  [32mloss:  6.53080  [38;2;180;60;0mgrad_norm:  0.4118  [38;2;54;234;195mmemory: 13.39GiB(5.00%)  [34mtps: 556,059  [36mtflops: 175.96  [35mmfu: 7.82%[39m
+[rank0]:[titan] 2026-09-12 15:15:39,652 - root - INFO - [GC] Performing periodic GC collection took 0.01 seconds
+[rank0]:[titan] 2026-09-12 15:15:45,472 - root - INFO - [GC] Performing periodic GC collection took 0.01 seconds
+[rank0]:[titan] 2026-09-12 15:15:45,685 - root - INFO - [31mstep: 200  [32mloss:  6.11150  [38;2;180;60;0mgrad_norm:  0.2047  [38;2;54;234;195mmemory: 11.38GiB(4.25%)  [34mtps: 561,698  [36mtflops: 177.75  [35mmfu: 7.90%[39m
+[rank0]:[titan] 2026-09-12 15:15:51,388 - root - INFO - [GC] Performing periodic GC collection took 0.01 seconds
+[rank0]:[titan] 2026-09-12 15:15:57,172 - root - INFO - [GC] Performing periodic GC collection took 0.01 seconds
+[rank0]:[titan] 2026-09-12 15:15:57,383 - root - INFO - [31mstep: 300  [32mloss:  6.19170  [38;2;180;60;0mgrad_norm:  0.1962  [38;2;54;234;195mmemory: 11.38GiB(4.25%)  [34mtps: 560,238  [36mtflops: 177.29  [35mmfu: 7.88%[39m
+[rank0]:[titan] 2026-09-12 15:16:03,004 - root - INFO - [GC] Performing periodic GC collection took 0.01 seconds
+[rank0]:[titan] 2026-09-12 15:16:08,817 - root - INFO - [GC] Performing periodic GC collection took 0.01 seconds
+[rank0]:[titan] 2026-09-12 15:16:09,028 - root - INFO - [31mstep: 400  [32mloss:  5.93889  [38;2;180;60;0mgrad_norm:  0.1871  [38;2;54;234;195mmemory: 11.38GiB(4.25%)  [34mtps: 562,798  [36mtflops: 178.10  [35mmfu: 7.92%[39m
+[rank0]:[titan] 2026-09-12 15:16:14,665 - root - INFO - [GC] Performing periodic GC collection took 0.01 seconds
+[rank0]:[titan] 2026-09-12 15:16:20,457 - root - INFO - [GC] Performing periodic GC collection took 0.01 seconds
+[rank0]:[titan] 2026-09-12 15:16:20,669 - root - INFO - [31mstep: 500  [32mloss:  5.73703  [38;2;180;60;0mgrad_norm:  0.1222  [38;2;54;234;195mmemory: 11.38GiB(4.25%)  [34mtps: 562,984  [36mtflops: 178.15  [35mmfu: 7.92%[39m
+[rank0]:[titan] 2026-09-12 15:16:26,260 - root - INFO - [GC] Performing periodic GC collection took 0.01 seconds
+[rank0]:[titan] 2026-09-12 15:16:32,077 - root - INFO - [GC] Performing periodic GC collection took 0.01 seconds
+[rank0]:[titan] 2026-09-12 15:16:32,290 - root - INFO - [31mstep: 600  [32mloss:  5.63845  [38;2;180;60;0mgrad_norm:  0.1288  [38;2;54;234;195mmemory: 11.38GiB(4.25%)  [34mtps: 563,952  [36mtflops: 178.46  [35mmfu: 7.93%[39m
+[rank0]:[titan] 2026-09-12 15:16:37,885 - root - INFO - [GC] Performing periodic GC collection took 0.01 seconds
+[rank0]:[titan] 2026-09-12 15:16:43,675 - root - INFO - [GC] Performing periodic GC collection took 0.01 seconds
+[rank0]:[titan] 2026-09-12 15:16:43,890 - root - INFO - [31mstep: 700  [32mloss:  5.67629  [38;2;180;60;0mgrad_norm:  0.1521  [38;2;54;234;195mmemory: 11.38GiB(4.25%)  [34mtps: 564,998  [36mtflops: 178.79  [35mmfu: 7.95%[39m
+[rank0]:[titan] 2026-09-12 15:16:49,493 - root - INFO - [GC] Performing periodic GC collection took 0.01 seconds
+[rank0]:[titan] 2026-09-12 15:16:55,263 - root - INFO - [GC] Performing periodic GC collection took 0.01 seconds
+[rank0]:[titan] 2026-09-12 15:16:55,476 - root - INFO - [31mstep: 800  [32mloss:  5.41359  [38;2;180;60;0mgrad_norm:  0.0909  [38;2;54;234;195mmemory: 11.38GiB(4.25%)  [34mtps: 565,661  [36mtflops: 179.00  [35mmfu: 7.96%[39m
+[rank0]:[titan] 2026-09-12 15:17:01,117 - root - INFO - [GC] Performing periodic GC collection took 0.01 seconds
+[rank0]:[titan] 2026-09-12 15:17:07,374 - root - INFO - [GC] Performing periodic GC collection took 0.01 seconds
+[rank0]:[titan] 2026-09-12 15:17:07,667 - root - INFO - [31mstep: 900  [32mloss:  5.19039  [38;2;180;60;0mgrad_norm:  0.1166  [38;2;54;234;195mmemory: 11.38GiB(4.25%)  [34mtps: 537,575  [36mtflops: 170.11  [35mmfu: 7.56%[39m
+[rank0]:[titan] 2026-09-12 15:17:13,351 - root - INFO - [GC] Performing periodic GC collection took 0.01 seconds
+[rank0]:[titan] 2026-09-12 15:17:19,123 - root - INFO - [GC] Performing periodic GC collection took 0.01 seconds
+[rank0]:[titan] 2026-09-12 15:17:19,352 - root - INFO - [31mstep: 1000  [32mloss:  5.33328  [38;2;180;60;0mgrad_norm:  0.0852  [38;2;54;234;195mmemory: 11.38GiB(4.25%)  [34mtps: 560,903  [36mtflops: 177.50  [35mmfu: 7.89%[39m
+[rank0]:[titan] 2026-09-12 15:17:24,945 - root - INFO - [GC] Performing periodic GC collection took 0.01 seconds
+[rank0]:[titan] 2026-09-12 15:17:30,702 - root - INFO - [GC] Performing periodic GC collection took 0.01 seconds
+[rank0]:[titan] 2026-09-12 15:17:30,914 - root - INFO - [31mstep: 1100  [32mloss:  5.12098  [38;2;180;60;0mgrad_norm:  0.0735  [38;2;54;234;195mmemory: 11.38GiB(4.25%)  [34mtps: 566,810  [36mtflops: 179.37  [35mmfu: 7.97%[39m
+[rank0]:[titan] 2026-09-12 15:17:36,474 - root - INFO - [GC] Performing periodic GC collection took 0.01 seconds
+[rank0]:[titan] 2026-09-12 15:17:42,299 - root - INFO - [GC] Performing periodic GC collection took 0.01 seconds
+[rank0]:[titan] 2026-09-12 15:17:42,528 - root - INFO - [31mstep: 1200  [32mloss:  5.14313  [38;2;180;60;0mgrad_norm:  0.0891  [38;2;54;234;195mmemory: 11.38GiB(4.25%)  [34mtps: 564,304  [36mtflops: 178.57  [35mmfu: 7.94%[39m
+[rank0]:[titan] 2026-09-12 15:17:42,950 - httpx - INFO - HTTP Request: HEAD https://s3.amazonaws.com/datasets.huggingface.co/datasets/datasets/json/json.py "HTTP/1.1 200 OK"
+[rank0]:[titan] 2026-09-12 15:17:47,790 - root - INFO - [33mvalidate step: 1200  [32mloss:  5.2045  [38;2;54;234;195mmemory: 13.40GiB(5.01%)  [34mtps: 622,850[39m
+[rank0]:[titan] 2026-09-12 15:17:47,791 - root - INFO - Sleeping 2 seconds for other ranks to complete
+[rank0]:[titan] 2026-09-12 15:17:49,791 - root - INFO - Training completed
+[rank0]:[titan] 2026-09-12 15:17:50,265 - root - INFO - Process group destroyed
