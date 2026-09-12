@@ -24,15 +24,15 @@ change the loss, when each variant is given its best learning rate out of six?
 
 ## Result
 
-![loss difference by learning rate](figures/loss_difference_by_learning_rate.png)
+![loss difference by learning rate](https://raw.githubusercontent.com/vincentzed/mixed-residual-ablation/master/figures/loss_difference_by_learning_rate.png)
 
 The sign flips with learning rate. Mixed wins at all four stable rates and loses
 badly at the two that are past the stability edge -- it buys a little loss and
 pays for it in learning-rate headroom.
 
-![validation loss by learning rate](figures/val_loss_by_learning_rate.png)
+![validation loss by learning rate](https://raw.githubusercontent.com/vincentzed/mixed-residual-ablation/master/figures/val_loss_by_learning_rate.png)
 
-![training loss at 3e-3](figures/training_curve_at_best_lr.png)
+![training loss at 3e-3](https://raw.githubusercontent.com/vincentzed/mixed-residual-ablation/master/figures/training_curve_at_best_lr.png)
 
 ## Numbers
 
@@ -101,6 +101,8 @@ actually monetize. The high-learning-rate blow-up is the honest cost.
   faster above it, so a finer grid between 3e-3 and 1e-2 could shrink or flip this.
 - n = 2 seeds, one depth, one token budget. A 0.03 effect on this evidence is
   suggestive, not settled.
+
+Full repo, including the raw logs for all 24 runs: <https://github.com/vincentzed/mixed-residual-ablation>
 
 ## Files
 
