@@ -24,15 +24,13 @@ change the loss, when each variant is given its best learning rate out of six?
 
 ## Result
 
-![loss difference by learning rate](https://raw.githubusercontent.com/vincentzed/mixed-residual-ablation/master/figures/loss_difference_by_learning_rate.png)
+![final validation loss at each learning rate](https://raw.githubusercontent.com/vincentzed/mixed-residual-ablation/master/figures/meta_val_loss_by_learning_rate.png)
 
 The sign flips with learning rate. Mixed wins at all four stable rates and loses
 badly at the two that are past the stability edge -- it buys a little loss and
 pays for it in learning-rate headroom.
 
-![validation loss by learning rate](https://raw.githubusercontent.com/vincentzed/mixed-residual-ablation/master/figures/val_loss_by_learning_rate.png)
-
-![training loss at 3e-3](https://raw.githubusercontent.com/vincentzed/mixed-residual-ablation/master/figures/training_curve_at_best_lr.png)
+![training loss at learning rate 0.003](https://raw.githubusercontent.com/vincentzed/mixed-residual-ablation/master/figures/meta_training_curve.png)
 
 ## Runs
 
@@ -110,12 +108,11 @@ actually monetize. The high-learning-rate blow-up is the honest cost.
 - n = 2 seeds, one depth, one token budget. A 0.03 effect on this evidence is
   suggestive, not settled.
 
-Full repo, including the raw logs for all 24 runs: <https://github.com/vincentzed/mixed-residual-ablation>
-
 ## Files
 
 - `scripts/extract.py` -- logs to `results.json`
-- `scripts/make_figures.py` -- `results.json` to `figures/`
+- `scripts/make_meta_figures.py` -- `results.json` to `figures/` (meta-style cards)
+- `scripts/hybrid_plot.py` -- vendored chart builders (meta-style-charts skill)
 - `scripts/thread_visuals.py` -- vega-lite chart helpers
 - `model.py`, `experiment___init__.py`, `config_registry.py` -- the torchtitan experiment
 - `sweep.sh` -- the 24-run sweep

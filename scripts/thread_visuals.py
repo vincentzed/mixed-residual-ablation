@@ -2,50 +2,52 @@
 # requires-python = ">=3.12"
 # dependencies = ["typer", "rich", "vl-convert-python", "pillow"]
 # ///
-"""Reusable visuals — vendored from vincentzed/my-skills
-(measured-gpu-writeup/scripts/thread_visuals.py), lightly adapted:
-PLOT_FONT -> Inter (registered from ~/.local/share/fonts/inter at render
-time), line_plot grows log2-x / custom ticks / reference-line support,
-bar_plot grows a text_format param.
+"""Reusable visuals for measured-gpu-writeup repos — the humans& edition.
 
-Import the helpers (or copy this file into the writeup repo's scripts/) and
-feed them MEASURED data read from logs/ — never staged numbers. Rasterize the
-SVGs afterwards with svg_to_png.sh (same directory; pass the media dir).
+Two genres, one identity (tokens from assets/tokens.css (see scripts/palette.py), i.e.
+humansand.ai's site.css):
 
-Color rules baked in (from the dataviz method — palette is the validated
-8-slot dark-mode categorical set; surface #292929):
+  - CHARTS  -> vega-lite blog cards via vl-convert (no browser, no
+    matplotlib), on the LIGHT paper palette: cream card #fffdf8, ink
+    #161513, deep-teal hero #176b64, rust #a33e2d, faint #918a7c context.
+  - TABLES / MATRICES / RECEIPTS / CODE -> rich terminal panels with macOS
+    window chrome, on the DARK paper complement: #1e1a14, ink #f1ece0,
+    teal #5cc9b8, rust #e2836a. Terminal panels STAY dark next to light
+    charts — that contrast is the look.
 
-- Slots are assigned in FIXED order, never cycled, never re-ranked.
-- The full 8 slots are legal only when every mark carries its own label
-  (categorical_grid REQUIRES the digit in each cell — identity is never
-  color-alone). Line/bar charts cap at 3 series; fold the rest or facet.
-- Magnitude comparisons (hbars) use ONE hue, not a rainbow.
-- Never two y-axes. Two scales -> two charts or index to a common base.
+Copy this file into the writeup repo's scripts/ and import the helpers.
+Feed them MEASURED data read from logs/ — never staged numbers. Rasterize
+the terminal SVGs with svg_to_png.sh (same directory).
 
-Helpers:
-  save(renderable, out_svg, ...)      rich renderable -> terminal-chrome SVG
-  categorical_grid(...)               bank-map style colored digit grid
-  results_table(...)                  measured-results table
-  code_panel(...)                     syntax-highlighted code (monokai)
-  receipt(...)                        predicted-vs-measured panel
-  hbars(...)                          single-hue horizontal bars, labeled
-  line_plot(...) / bar_plot(...)      blog-card vega-lite PNGs (vl-convert)
+Discipline baked into the helpers (see references/visual-system for why):
+  - grouped_bar_plot is the default chart: ABSOLUTE units (us, GB/s),
+    zero-baseline bars, a direct value label on every bar, hero-vs-context
+    coloring for on/off comparisons, optional row facets (shared y) for a
+    third dimension such as dtype.
+  - titles say literally what is plotted; the unit subtitle carries the
+    conditions; no methodology captions inside figures.
+  - line/bar charts cap at 3 series; grids print the digit in every cell.
 
-Demo/smoke-test:  uv run thread_visuals.py --demo --out /tmp/tv-demo
+Smoke-test:  uv run thread_visuals.py --demo --out /tmp/tv-demo
 """
 
 from pathlib import Path
 from typing import Annotated
 
+import re
+
 from rich.console import Console, Group
 from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
+from rich.terminal_theme import TerminalTheme
 from rich.text import Text
 
 import typer
 
-# validated 8-slot dark-mode categorical palette (fixed order; see docstring)
+# 8-slot categorical palette for digit GRIDS only (bank maps etc.) — kept
+# from the validated dark set because humansand has two accents and a grid
+# needs eight; the mandatory in-cell digits carry identity regardless.
 PALETTE = [
     "#3987e5",
     "#d95926",
@@ -57,7 +59,7 @@ PALETTE = [
     "#e66767",
 ]
 SURFACE = "#292929"
-GOOD, BAD = "#199e70", "#e66767"  # status accents (before/after), not series
+GOOD, BAD = "#5cc9b8", "#e2836a"  # humansand dark teal/rust — terminal-panel accents, not series
 
 
 def _ink(hex_color: str) -> str:
@@ -65,15 +67,34 @@ def _ink(hex_color: str) -> str:
     return "black" if (0.299 * r + 0.587 * g + 0.114 * b) > 140 else "white"
 
 
-MONO_FONT = "Google Sans Code"  # installed locally; distinctive terminal mono
+MONO_FONT = "Google Sans Code"  # install from google/fonts (OFL); terminal + code panels
+
+
+# Terminal panels: humansand DARK paper, ANSI slots mapped semantically —
+# green -> teal (good), red -> rust (bad/emphasis), warm grays elsewhere.
+TERMINAL_THEME = TerminalTheme(
+    (30, 26, 20),                                   # background #1e1a14
+    (241, 236, 224),                                # foreground #f1ece0
+    [(30, 26, 20), (226, 131, 106), (92, 201, 184), (179, 168, 151),
+     (131, 122, 106), (92, 201, 184), (92, 201, 184), (241, 236, 224)],
+    [(131, 122, 106), (226, 131, 106), (92, 201, 184), (179, 168, 151),
+     (131, 122, 106), (92, 201, 184), (92, 201, 184), (255, 255, 255)],
+)
 
 
 def save(renderable, out_svg: Path, width: int = 90, title: str = "") -> Path:
+    """Rich renderable -> terminal-chrome SVG on the humansand dark paper.
+
+    Strips rich's cdnjs Fira Code @font-face blocks and points the SVG at
+    the locally-installed MONO_FONT instead — otherwise the webfont wins
+    over the installed face at rasterization time.
+    """
     console = Console(record=True, width=width, force_terminal=True)
     console.print(renderable)
     out_svg.parent.mkdir(parents=True, exist_ok=True)
-    console.save_svg(str(out_svg), title=title or out_svg.stem)
+    console.save_svg(str(out_svg), title=title or out_svg.stem, theme=TERMINAL_THEME)
     svg = out_svg.read_text()
+    svg = re.sub(r"@font-face \{.*?\}\n", "", svg, flags=re.S)
     out_svg.write_text(svg.replace("Fira Code", MONO_FONT))
     return out_svg
 
@@ -225,7 +246,9 @@ PLOT_INK = "#161513"
 PLOT_INK_MUTED = "#6d6860"
 PLOT_TAN = "#918a7c"  # humansand light faint — unit/subtitle meta line
 PLOT_GRID = "#d8d0c4"
-PLOT_FONT = "Liberation Sans"  # Helvetica-metric stand-in for the original's Helvetica Neue
+PLOT_FONT = "Liberation Sans"  # mac: use "Helvetica Neue"; Linux: Liberation Sans statics
+# (register the font dir with vl_convert.register_font_directory before plotting;
+#  resvg ignores variable-font axes, so install STATIC weights for plot fonts)
 
 
 def _plot_config(width: int, height: int) -> dict:
@@ -283,8 +306,8 @@ def _render_vl(spec: dict, out_png: Path, scale: float = 3.0) -> Path:
     png = vlc.vegalite_to_png(spec, scale=scale)
     out_png.write_bytes(png)
     _round_corners(out_png, radius=int(16 * scale))
-    # Also emit SVG: a gist can only carry text files, so the vector copy is what
-    # survives when the figures are published there.
+    # Side-output a vector copy: a gist can only carry text files, so the SVG is
+    # what survives when these figures are published there. PNG is unchanged.
     out_png.with_suffix(".svg").write_text(vlc.vegalite_to_svg(spec))
     return out_png
 
@@ -531,13 +554,15 @@ def signed_bar_plot(
 ) -> Path:
     """Blog-card vertical bars for a signed delta, colored by sign.
 
-    A difference-of-two-conditions chart is the one case where a zero baseline
-    carries the meaning, so bars grow up and down from an explicit zero rule.
-    Teal marks the good direction, rust the bad one.
+    The house default is grouped_bar_plot in absolute units, and that stays the
+    right chart for magnitudes. A difference of two conditions is the one case
+    where the zero baseline carries the meaning rather than the scale, so bars
+    grow up and down from an explicit zero rule. Hero teal marks the good
+    direction, rust the bad one -- the same on/off semantics as mute_second.
     """
     good, bad = PLOT_HERO, PLOT_SERIES[1]
-    values = [{"group": k, "value": v} for k, v in items]
     neg_color, pos_color = (good, bad) if good_is_negative else (bad, good)
+    values = [{"group": k, "value": v} for k, v in items]
     spec = _plot_config(width, 420) | {
         "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
         "title": {"text": title, "subtitle": unit},
@@ -548,8 +573,7 @@ def signed_bar_plot(
                  "condition": {"test": "datum.value < 0", "value": neg_color},
                  "value": pos_color}}},
             {"mark": {"type": "text", "align": "center", "color": PLOT_INK,
-                      "fontSize": 12, "fontWeight": 700,
-                      "baseline": "middle"},
+                      "fontSize": 12, "fontWeight": 700, "baseline": "middle"},
              "encoding": {
                  "text": {"field": "value", "format": label_format},
                  "y": {"field": "value", "type": "quantitative"},
@@ -637,11 +661,25 @@ def main(
         "TFLOP/s",
         "mma.sync GEMM throughput (B300)",
     )
-    freeze_code(
-        "// the entire technology\n"
-        "apply(addr) = addr ^ ((addr & 0x380) >> 3);  // ZZZ ^= YYY",
-        out / "demo-freeze.svg",
+    grouped_bar_plot(
+        ["1", "4", "8", "16", "64"],
+        {"swap on": [8.1, 8.1, 8.1, 8.1, 9.2],
+         "swap off": [10.4, 10.5, 9.2, 8.5, 8.3]},
+        out / "demo-grouped.png",
+        unit="kernel time, microseconds (lower is better) · demo data",
+        title="Kernel time by batch size — swap on vs. off",
+        xlabel="tokens in the batch",
+        label_format=".1f", mute_second=True,
     )
+    import shutil
+    if shutil.which("freeze"):
+        freeze_code(
+            "// the entire technology\n"
+            "apply(addr) = addr ^ ((addr & 0x380) >> 3);  // ZZZ ^= YYY",
+            out / "demo-freeze.svg",
+        )
+    else:
+        typer.echo("freeze not installed - skipping the code-shot demo")
     typer.echo(f"demo files in {out}/ — rasterize SVGs with svg_to_png.sh {out}")
 
 

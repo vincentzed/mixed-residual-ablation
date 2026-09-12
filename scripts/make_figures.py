@@ -8,7 +8,16 @@ import json
 import statistics
 from pathlib import Path
 
+import vl_convert as vlc
+
 import thread_visuals as tv
+
+# The skill notes that resvg ignores variable-font axes, so the STATIC weights
+# have to be registered explicitly rather than left to fontconfig.
+for _d in ("liberation", "inter", "gsc"):
+    _p = Path.home() / ".local/share/fonts" / _d
+    if _p.is_dir():
+        vlc.register_font_directory(str(_p))
 
 ROOT = Path(__file__).resolve().parent.parent
 FIG = ROOT / "figures"
@@ -53,7 +62,11 @@ FROM_STEP = 300  # the 11.3 -> 6.3 warmup drop otherwise flattens the whole rang
 
 
 def avg_curve(arm):
-    per_seed = [dict(R[f"{arm}|{best_lr}|{s}"]["curve"]) for s in SEEDS]
+    # curve rows are (step, loss, grad_norm)
+    per_seed = [
+        {row[0]: row[1] for row in R[f"{arm}|{best_lr}|{s}"]["curve"]}
+        for s in SEEDS
+    ]
     steps = sorted(k for k in per_seed[0] if k >= FROM_STEP)
     return steps, [statistics.mean(c[k] for c in per_seed) for k in steps]
 

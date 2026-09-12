@@ -2,23 +2,7 @@
     <!-- Generated with Rich https://www.textualize.io -->
     <style>
 
-    @font-face {
-        font-family: "Google Sans Code";
-        src: local("FiraCode-Regular"),
-                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Regular.woff2") format("woff2"),
-                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Regular.woff") format("woff");
-        font-style: normal;
-        font-weight: 400;
-    }
-    @font-face {
-        font-family: "Google Sans Code";
-        src: local("FiraCode-Bold"),
-                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Bold.woff2") format("woff2"),
-                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Bold.woff") format("woff");
-        font-style: bold;
-        font-weight: 700;
-    }
-
+        
     .terminal-2924161250-matrix {
         font-family: Google Sans Code, monospace;
         font-size: 20px;
@@ -32,10 +16,10 @@
         font-family: arial;
     }
 
-    .terminal-2924161250-r1 { fill: #98729f }
-.terminal-2924161250-r2 { fill: #c5c8c6 }
-.terminal-2924161250-r3 { fill: #c5c8c6;font-style: italic; }
-.terminal-2924161250-r4 { fill: #c5c8c6;font-weight: bold }
+    .terminal-2924161250-r1 { fill: #5cc9b8 }
+.terminal-2924161250-r2 { fill: #f1ece0 }
+.terminal-2924161250-r3 { fill: #f1ece0;font-style: italic; }
+.terminal-2924161250-r4 { fill: #f1ece0;font-weight: bold }
     </style>
 
     <defs>
@@ -80,7 +64,7 @@
             </clipPath>
     </defs>
 
-    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="797" height="365.2" rx="8"/><text class="terminal-2924161250-title" fill="#c5c8c6" text-anchor="middle" x="398" y="27">mixed-residual&#160;ablation</text>
+    <rect fill="#1e1a14" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="797" height="365.2" rx="8"/><text class="terminal-2924161250-title" fill="#f1ece0" text-anchor="middle" x="398" y="27">mixed-residual&#160;ablation</text>
             <g transform="translate(26,22)">
             <circle cx="0" cy="0" r="7" fill="#ff5f57"/>
             <circle cx="22" cy="0" r="7" fill="#febc2e"/>

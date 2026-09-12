@@ -1,12 +1,18 @@
 #!/usr/bin/env bash
-# Rasterize media/*.svg to media/*.png via headless Chromium (playwright's,
-# works on Linux boxes with no system Chrome), then autocrop with Pillow.
-# Retina-crisp via device_scale_factor=2.
+# Rasterize <dir>/*.svg to <dir>/*.png via headless Chromium (playwright's —
+# works on Linux boxes with no system Chrome, and on macOS), then autocrop
+# on the alpha channel with Pillow. Retina-crisp via device_scale_factor=2.
+#
+# The page is screenshotted with omit_background=True, so the result is a
+# rounded card with a TRANSPARENT outside — matching the vega-lite cards.
+#
+# Usage: svg_to_png.sh [dir]   (default: ./media next to the calling repo)
 set -euo pipefail
-cd "$(dirname "$0")/../media"
+cd "${1:-$(dirname "$0")/../media}"
 
 uv run --no-project --with playwright --with pillow python - <<'EOF'
 import glob
+import os
 import subprocess
 import sys
 
@@ -15,7 +21,7 @@ from playwright.sync_api import sync_playwright
 subprocess.run([sys.executable, "-m", "playwright", "install", "chromium"],
                check=True, capture_output=True)
 
-from PIL import Image, ImageChops  # noqa: E402
+from PIL import Image  # noqa: E402
 
 with sync_playwright() as p:
     browser = p.chromium.launch()
@@ -23,8 +29,8 @@ with sync_playwright() as p:
                             device_scale_factor=2)
     for svg in sorted(glob.glob("*.svg")):
         png = svg[:-4] + ".png"
-        page.goto(f"file://{__import__('os').getcwd()}/{svg}")
-        page.wait_for_timeout(1500)  # let the cdnjs webfonts load
+        page.goto(f"file://{os.getcwd()}/{svg}")
+        page.wait_for_timeout(1500)  # let any webfonts settle
         page.screenshot(path=png, omit_background=True)
         img = Image.open(png).convert("RGBA")
         bbox = img.getchannel("A").getbbox()
