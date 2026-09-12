@@ -24,13 +24,18 @@ change the loss, when each variant is given its best learning rate out of six?
 
 ## Result
 
-![final validation loss at each learning rate](figures/meta_val_loss_by_learning_rate.png)
+![Final validation loss vs. learning rate](figures/mixed_residual.png)
 
-The sign flips with learning rate. Mixed wins at all four stable rates and loses
-badly at the two that are past the stability edge -- it buys a little loss and
-pays for it in learning-rate headroom.
-
-![training loss at learning rate 0.003](figures/meta_training_curve.png)
+**Figure 1 | Performance of mixed residual connections across learning rates.**
+We compare a mixed residual, which combines the hidden states of layers $L-1$ and
+$L-2$ in equal proportion, against the baseline residual connection from layer
+$L-1$ alone. (a) Final validation loss as a function of learning rate; error bars
+span two seeds. (b) Loss difference between the two variants, where negative
+values indicate the mixed architecture attains lower loss. (c) Training loss at
+learning rate $3\times10^{-3}$, the setting that minimises both variants. The
+mixed residual attains consistent improvements at lower learning rates but
+degrades as the learning rate increases. All models are 8-layer Transformers
+trained for 78.6M tokens.
 
 ## Runs
 
@@ -111,8 +116,7 @@ actually monetize. The high-learning-rate blow-up is the honest cost.
 ## Files
 
 - `scripts/extract.py` -- logs to `results.json`
-- `scripts/make_meta_figures.py` -- `results.json` to `figures/` (meta-style cards)
-- `scripts/hybrid_plot.py` -- vendored chart builders (meta-style-charts skill)
+- `scripts/make_neurips_figure.py` -- `results.json` to `figures/mixed_residual.{png,pdf}`
 - `scripts/thread_visuals.py` -- vega-lite chart helpers
 - `model.py`, `experiment___init__.py`, `config_registry.py` -- the torchtitan experiment
 - `sweep.sh` -- the 24-run sweep
