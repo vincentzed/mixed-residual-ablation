@@ -6,7 +6,9 @@ from pathlib import Path
 
 ANSI = re.compile(r"\x1b\[[0-9;]*m")
 VAL = re.compile(r"validate step:\s*(\d+)\s+loss:\s*([\d.]+)")
-TRAIN = re.compile(r"step:\s*(\d+)\s+loss:\s*([\d.]+|nan|inf)\s+grad_norm")
+TRAIN = re.compile(
+    r"step:\s*(\d+)\s+loss:\s*([\d.]+|nan|inf)\s+grad_norm:\s*([\d.]+|nan|inf)"
+)
 
 LRS = ["1e-4", "3e-4", "1e-3", "3e-3", "1e-2", "3e-2"]
 ARMS = ["default", "mixed"]
@@ -30,7 +32,9 @@ for arm in ARMS:
                 m = TRAIN.search(line)
                 if m:
                     try:
-                        curve.append((int(m.group(1)), float(m.group(2))))
+                        curve.append(
+                            (int(m.group(1)), float(m.group(2)), float(m.group(3)))
+                        )
                     except ValueError:
                         pass
             out[f"{arm}|{lr}|{seed}"] = {"val": val, "curve": curve}

@@ -1,0 +1,16 @@
+{
+  "os": "Linux-6.8.0-60-generic-x86_64-with-glibc2.39",
+  "python": "CPython 3.12.3",
+  "startedAt": "2026-09-12T16:37:20.323833Z",
+  "program": "/home/brayden/mixed-residual-ablation/scripts/replay_wandb.py",
+  "codePath": "scripts/replay_wandb.py",
+  "codePathLocal": "scripts/replay_wandb.py",
+  "git": {
+    "remote": "https://github.com/vincentzed/mixed-residual-ablation.git",
+    "commit": "9b5bce3a6b83e9491545320c17eb14602517b1c3"
+  },
+  "root": "/home/brayden/mixed-residual-ablation",
+  "host": "sgl-b300-inference",
+  "executable": "/usr/bin/python3",
+  "writerId": "i25zwb9m2cec1p61ehmevylk9mtj2bho"
+}

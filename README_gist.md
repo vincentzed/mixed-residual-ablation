@@ -34,6 +34,14 @@ pays for it in learning-rate headroom.
 
 ![training loss at 3e-3](https://raw.githubusercontent.com/vincentzed/mixed-residual-ablation/master/figures/training_curve_at_best_lr.png)
 
+## Runs
+
+All 24 runs are browsable on Weights & Biases: <https://wandb.ai/sglang-university-of-waterloo/mixed-residual-ablation>
+
+Grouped by `residual` (`default` / `mixed`), with `lr` and `seed` in the config, so
+the arms can be overlaid directly. `train/loss` and `train/grad_norm` carry the full
+history; `final_val_loss` is the summary metric the comparison is scored on.
+
 ## Numbers
 
 | learning rate | default | mixed | mixed - default |
